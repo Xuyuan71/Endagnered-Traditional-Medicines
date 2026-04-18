@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red List · Traditional Medicine Herbs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f4ef;
+  --bg2:#edeae3;
+  --bg3:#e2ddd5;
+  --ink:#1a1714;
+  --ink2:#5a5550;
+  --ink3:#9a9590;
+  --cr:#9b2335;
+  --en:#c0440e;
+  --vu:#c47a00;
+  --nt:#4a7c59;
+  --dd:#5a6b80;
+  --lc:#3d6b3a;
+  --accent:#9b2335;
+  --border:rgba(26,23,20,0.12);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* HEADER */
+header{
+  padding:3rem 2rem 2rem;
+  border-bottom:1px solid var(--border);
+  max-width:1100px;
+  margin:0 auto;
+}
+.header-kicker{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:0.75rem;
+}
+header h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:400;
+  line-height:1.15;
+  color:var(--ink);
+  margin-bottom:0.5rem;
+}
+header h1 em{
+  font-style:italic;
+  color:var(--accent);
+}
+.header-sub{
+  font-size:14px;
+  color:var(--ink2);
+  max-width:580px;
+  line-height:1.7;
+}
+.polyglot-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:1rem;
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  text-decoration:none;
+  border:1px solid var(--accent);
+  border-radius:2px;
+  padding:4px 10px;
+  opacity:0.8;
+  transition:opacity 0.15s;
+}
+.polyglot-badge:hover{opacity:1}
+
+/* LAYOUT */
+main{max-width:1100px;margin:0 auto;padding:2rem 2rem 4rem}
+
+/* METRIC CARDS */
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:2.5rem;
+}
+.metric{
+  background:var(--bg);
+  padding:1.25rem 1.5rem;
+}
+.metric-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:0.4rem;
+}
+.metric-value{
+  font-family:'DM Serif Display',serif;
+  font-size:2.2rem;
+  font-weight:400;
+  line-height:1;
+  color:var(--ink);
+}
+.metric-value.danger{color:var(--cr)}
+.metric-sub{font-size:11px;color:var(--ink3);margin-top:4px}
+
+/* SECTION HEADINGS */
+.section-head{
+  display:flex;
+  align-items:baseline;
+  gap:1rem;
+  margin-bottom:1.25rem;
+}
+.section-head h2{
+  font-family:'DM Serif Display',serif;
+  font-size:1.4rem;
+  font-weight:400;
+}
+.section-head .section-note{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--ink3);
+}
+
+/* CHARTS GRID */
+.charts-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.5rem;
+  margin-bottom:2.5rem;
+}
+@media(max-width:680px){.charts-grid{grid-template-columns:1fr}}
+.chart-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:1.5rem;
+}
+.chart-card h3{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:1rem;
+}
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 16px;
+  margin-bottom:1rem;
+}
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--ink2);
+  cursor:pointer;
+}
+.legend-swatch{
+  width:10px;height:10px;
+  border-radius:1px;
+  flex-shrink:0;
+}
+.chart-wrap{position:relative;width:100%}
+
+/* STACKED THREAT BAR */
+.stacked-section{margin-bottom:2.5rem}
+.stacked-wrap{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:1.5rem;
+}
+.stacked-wrap h3{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:1rem;
+}
+
+/* SPECIES TABLE PANEL */
+.species-panel{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:2.5rem;
+}
+.panel-toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:1rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.panel-toolbar h2{
+  font-family:'DM Serif Display',serif;
+  font-size:1.2rem;
+  font-weight:400;
+  flex:1;
+}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.08em;
+  padding:4px 10px;
+  border-radius:2px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  cursor:pointer;
+  transition:all 0.15s;
+  color:var(--ink2);
+}
+.pill:hover{border-color:var(--ink3);color:var(--ink)}
+.pill.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pill.cr{border-color:var(--cr);color:var(--cr)}
+.pill.cr.active{background:var(--cr);color:#fff}
+.pill.en{border-color:var(--en);color:var(--en)}
+.pill.en.active{background:var(--en);color:#fff}
+.pill.vu{border-color:var(--vu);color:var(--vu)}
+.pill.vu.active{background:var(--vu);color:#fff}
+.pill.nt{border-color:var(--nt);color:var(--nt)}
+.pill.nt.active{background:var(--nt);color:#fff}
+.pill.dd{border-color:var(--dd);color:var(--dd)}
+.pill.dd.active{background:var(--dd);color:#fff}
+.pill.lc{border-color:var(--lc);color:var(--lc)}
+.pill.lc.active{background:var(--lc);color:#fff}
+
+.search-box{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  padding:5px 10px;
+  border:1px solid var(--border);
+  border-radius:2px;
+  background:var(--bg);
+  color:var(--ink);
+  width:200px;
+  outline:none;
+}
+.search-box:focus{border-color:var(--ink3)}
+.search-box::placeholder{color:var(--ink3)}
+
+.table-wrap{overflow-x:auto;max-height:480px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  padding:0.6rem 1rem;
+  text-align:left;
+  background:var(--bg3);
+  position:sticky;
+  top:0;
+  z-index:1;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+td{
+  padding:0.6rem 1rem;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+  color:var(--ink);
+}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.status-badge{
+  display:inline-block;
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  font-weight:500;
+  letter-spacing:0.08em;
+  padding:2px 6px;
+  border-radius:1px;
+}
+.badge-CR{background:#f5dde0;color:var(--cr)}
+.badge-EN{background:#fde8dc;color:var(--en)}
+.badge-VU{background:#fdf0d0;color:var(--vu)}
+.badge-NT{background:#dff0e5;color:var(--nt)}
+.badge-DD{background:#dde5ef;color:var(--dd)}
+.badge-LC{background:#daebd9;color:var(--lc)}
+.kgraph-link{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--accent);
+  text-decoration:none;
+  border-bottom:1px dotted var(--accent);
+  white-space:nowrap;
+}
+.kgraph-link:hover{border-bottom-style:solid}
+.drug-names{
+  font-size:12px;
+  color:var(--ink2);
+  line-height:1.5;
+}
+.threat-text{font-size:11px;color:var(--ink3);line-height:1.4}
+.table-count{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--ink3);
+  padding:0.6rem 1.5rem;
+  border-top:1px solid var(--border);
+}
+
+/* DOWNLOAD */
+.download-bar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:1rem 1.5rem;
+  background:var(--bg3);
+  border-top:1px solid var(--border);
+}
+.download-bar span{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--ink3);
+  flex:1;
+}
+.dl-btn{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  padding:6px 14px;
+  border:1px solid var(--ink);
+  border-radius:2px;
+  background:var(--ink);
+  color:var(--bg);
+  cursor:pointer;
+  transition:opacity 0.15s;
+  text-decoration:none;
+  display:inline-block;
+}
+.dl-btn:hover{opacity:0.8}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:1.5rem 2rem;
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+footer p{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-kicker">IUCN Red List · Traditional Medicine Plants</p>
+  <h1>Endangered herbs of <em>China & South Asia</em></h1>
+  <p class="header-sub">Conservation status of species used in traditional Chinese, Malay, and South Asian medicine — drawn from the IUCN Red List and the Polyglot knowledge graph.</p>
+  <a href="https://kgraph.sg/polyglot/" target="_blank" class="polyglot-badge">↗ Explore Polyglot</a>
+</header>
+
+<main>
+
+  <!-- METRIC CARDS -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Species assessed</div>
+      <div class="metric-value">8,824</div>
+      <div class="metric-sub">in full corpus</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Red Listed</div>
+      <div class="metric-value">2,274</div>
+      <div class="metric-sub">26% of corpus</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Threatened (VU–CR)</div>
+      <div class="metric-value danger">220</div>
+      <div class="metric-sub">10% of listed</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Critically endangered</div>
+      <div class="metric-value danger">25</div>
+      <div class="metric-sub">one step from wild extinction</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Primary threat</div>
+      <div class="metric-value" style="font-size:1.1rem;line-height:1.3;padding-top:0.2rem">Agriculture<br>&amp; overharvest</div>
+      <div class="metric-sub">top two drivers</div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>IUCN status distribution</h3>
+      <div class="legend" id="donut-legend"></div>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="donutChart" role="img" aria-label="Donut chart of IUCN conservation status. LC 1072 shown, EN 42, VU 43, CR 15, NT 23, DD 41.">Status distribution of Red Listed traditional medicine species.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Primary threat drivers</h3>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="threatChart" role="img" aria-label="Horizontal bar chart of threat drivers.">Threat drivers by species count.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- STACKED THREATENED BAR -->
+  <div class="stacked-section">
+    <div class="stacked-wrap">
+      <h3>Threatened species breakdown — VU / EN / CR</h3>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--vu)"></span>VU — Vulnerable (43)</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--en)"></span>EN — Endangered (42)</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--cr)"></span>CR — Critically Endangered (15)</span>
+      </div>
+      <div class="chart-wrap" style="height:72px">
+        <canvas id="stackedChart" role="img" aria-label="Stacked bar: VU 43, EN 42, CR 15.">Threatened species VU 43, EN 42, CR 15.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPECIES TABLE -->
+  <div class="species-panel">
+    <div class="panel-toolbar">
+      <h2>Species data</h2>
+      <div class="filter-pills" id="pills"></div>
+      <input class="search-box" id="search" type="text" placeholder="Search species…">
+    </div>
+    <div class="table-wrap">
+      <table id="speciesTable">
+        <thead>
+          <tr>
+            <th>Scientific name</th>
+            <th>Status</th>
+            <th>Chinese drug names</th>
+            <th>Threat</th>
+            <th>Polyglot</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="table-count" id="tableCount"></div>
+    <div class="download-bar">
+      <span id="dlLabel">Download filtered data as CSV</span>
+      <button class="dl-btn" onclick="downloadCSV()">↓ Download CSV</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Data: IUCN Red List · <a href="https://kgraph.sg/polyglot/" target="_blank">Polyglot knowledge graph</a> · China &amp; South Asia traditional medicine</p>
+  <p>Note: LC species shown limited to first 200 of 1,072 for performance.</p>
+</footer>
+
+<script>
+const RAW = {"byLevel":{"EN":[{"name":"Daphne altaica Pall.","link":"https://kgraph.sg/polyglot/?drug=CDN00003","threat":"biological resource use","drugs":["阿尔泰瑞香"]},{"name":"Ginkgo biloba L.","link":"https://kgraph.sg/polyglot/?drug=CDN00213","threat":"biological resource use","drugs":["白果","白果根","白果叶"]},{"name":"Paphiopedilum concolor (Lindl. ex Bateman) Pfitzer","link":"https://kgraph.sg/polyglot/?drug=CDN00849","threat":"biological resource use，natural system modification","drugs":["巴掌草"]},{"name":"Cinnamomum mairei H.Lév.","link":"https://kgraph.sg/polyglot/?drug=CDN01715","threat":"agriculture and aquaculture","drugs":["川桂皮"]},{"name":"Camellia euphlebia Merr. ex Sealy","link":"https://kgraph.sg/polyglot/?drug=CDN02605","threat":"agriculture and aquaculture","drugs":["大叶金花茶叶"]},{"name":"Torreya fargesii var. yunnanensis (W.C.Cheng & L.K.Fu) N.Kang","link":"https://kgraph.sg/polyglot/?drug=CDN02717","threat":"biological resource use","drugs":["滇榧子","沙松果"]},{"name":"Musella lasiocarpa (Franch.) C.Y.Wu ex H.W.Li","link":"https://kgraph.sg/polyglot/?drug=CDN03011","threat":"agriculture and aquaculture","drugs":["地涌金莲"]},{"name":"Cephalotaxus hainanensis H.L.Li","link":"https://kgraph.sg/polyglot/?drug=CDN04642","threat":"residential and commercial development","drugs":["海南粗榧"]},{"name":"Cinnamomum kwangtungense Merr.","link":"https://kgraph.sg/polyglot/?drug=CDN05198","threat":"agriculture and aquaculture","drugs":["红辣槁树皮"]},{"name":"Magnolia officinalis Rehder & E.H.Wilson","link":"https://kgraph.sg/polyglot/?drug=CDN05399","threat":"agriculture and aquaculture","drugs":["厚朴","厚朴果","厚朴花"]},{"name":"Coptis teeta Wall.","link":"https://kgraph.sg/polyglot/?drug=CDN05691","threat":"annual and perenial non-timber crops roads and railroads","drugs":["黄连"]},{"name":"Kirengeshoma palmata Yatabe","link":"https://kgraph.sg/polyglot/?drug=CDN05810","threat":"gathering terrestial plants ,recreational activity","drugs":["黄山梅"]},{"name":"Cinnamomum parthenoxylon (Jack) Meisn.","link":"https://kgraph.sg/polyglot/?drug=CDN05887","threat":"——","drugs":["黄樟"]},{"name":"Paphiopedilum parishii (Rchb.f.) Stein","link":"https://kgraph.sg/polyglot/?drug=CDN05979","threat":"residential commercial development biological esource use natuaral system modification","drugs":["花叶子","千灵丹"]},{"name":"Picrorhiza kurroa Royle ex Benth.","link":"https://kgraph.sg/polyglot/?drug=CDN06048","threat":"residential and commercial development transportation and service corridos climate change and severe weather","drugs":["胡黄连"]},{"name":"Pandanus furcatus Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN06288","threat":"agriculture and aquaculture， nature system modification","drugs":["假菠萝"]},{"name":"Alyxia menglungensis Tsiang & P.T.Li","link":"https://kgraph.sg/polyglot/?drug=CDN06359","threat":"——","drugs":["浆包藤"]},{"name":"Camellia petelotii var. petelotii","link":"https://kgraph.sg/polyglot/?drug=CDN06845","threat":"residential and commercial development ，human instruction and disturbance，pollution","drugs":["金花茶叶"]},{"name":"Garcinia paucinervis Chun & F.C.How","link":"https://kgraph.sg/polyglot/?drug=CDN06961","threat":"agriculture and aquaculture biological resource use","drugs":["金丝李"]},{"name":"Coffea arabica L.","link":"https://kgraph.sg/polyglot/?drug=CDN07442","threat":"residential and commercial development，agriculture and aquaculture，transportation and service corridor，biological resource use","drugs":["咖啡"]},{"name":"Cypripedium margaritaceum Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN07804","threat":"residential and commercial development，agriculture and aquaculture，transportation and service corridor，biological resource use，climate change","drugs":["兰花双叶草"]},{"name":"Saruma henryi Oliv.","link":"https://kgraph.sg/polyglot/?drug=CDN07951","threat":"——","drugs":["冷水丹"]},{"name":"Cypripedium japonicum Thunb.","link":"https://kgraph.sg/polyglot/?drug=CDN08468","threat":"residential and commercial development，agriculture and aquaculture，biological resource use，transportation","drugs":["龙舌箭","扇子七"]},{"name":"Eleutherococcus verticillatus (G.Hoo) H.Ohashi","link":"https://kgraph.sg/polyglot/?drug=CDN08671","threat":"——","drugs":["轮伞五加"]},{"name":"Afzelia xylocarpa (Kurz) Craib","link":"https://kgraph.sg/polyglot/?drug=CDN09654","threat":"","drugs":["缅茄"]},{"name":"Machilus nanmu (Oliv.) Hemsl.","link":"https://kgraph.sg/polyglot/?drug=CDN10065","threat":"biological resource use，agriculture and aquaculture","drugs":["楠木皮"]},{"name":"Cypripedium franchetii Rolfe","link":"https://kgraph.sg/polyglot/?drug=CDN10447","threat":"residential and commercial development，transportation and service corridors","drugs":["牌楼七","蜈蚣七"]},{"name":"Bretschneidera sinensis Hemsl.","link":"https://kgraph.sg/polyglot/?drug=CDN11995","threat":"agriculture and aquaculture，biological resource use","drugs":["山桃树皮","钟萼木"]},{"name":"Gymnadenia crassinervis Finet","link":"https://kgraph.sg/polyglot/?drug=CDN12657","threat":"——","drugs":["手参","鼠"]},{"name":"Dendrocnide urentissima (Gagnep.) Chew","link":"https://kgraph.sg/polyglot/?drug=CDN12731","threat":"agriculture and aquaculture，biological resource use","drugs":["树火麻"]},{"name":"Cinnamomum heyneanum Nees","link":"https://kgraph.sg/polyglot/?drug=CDN13097","threat":"agriculture and aquaculture","drugs":["顺江木"]},{"name":"Liquidambar orientalis Mill.","link":"https://kgraph.sg/polyglot/?drug=CDN13361","threat":"residential and commercial development，agriculture and aquaculture","drugs":["苏合香"]},{"name":"Podophyllum hexandrum Royle","link":"https://kgraph.sg/polyglot/?drug=CDN13536","threat":"agriculture and aquaculture，biological resource use，invasive and other problematic pieces，genes and diseases","drugs":["桃儿七","小叶莲"]},{"name":"Trillium tschonoskii Maxim.","link":"https://kgraph.sg/polyglot/?drug=CDN13969","threat":"agriculture and aquaculture，biological resource use，invasive and other problematic pieces，genes and diseases","drugs":["头顶一颗珠"]},{"name":"Sophora wightii Baker","link":"https://kgraph.sg/polyglot/?drug=CDN14364","threat":"——","drugs":["乌豆根","西南槐树"]},{"name":"Cypripedium fasciolatum Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN14391","threat":"residential and commercial development，agriculture and aquaculture，transportation and service corridors","drugs":["蜈蚣旗根"]},{"name":"Vanilla planifolia Andrews","link":"https://kgraph.sg/polyglot/?drug=CDN14695","threat":"agriculture and aquaculture，biological resource use","drugs":["香草兰"]},{"name":"Angelica glauca Edgew.","link":"https://kgraph.sg/polyglot/?drug=CDN15507","threat":"residential and commercial development，agriculture and aquaculture，transportation and service corridors","drugs":["新疆羌活"]},{"name":"Magnolia rostrata W.W.Sm.","link":"https://kgraph.sg/polyglot/?drug=CDN17214","threat":"biological resource use","drugs":["云朴"]},{"name":"Pterocarpus santalinus L.f.","link":"https://kgraph.sg/polyglot/?drug=CDN18140","threat":"agriculture and aquaculture,biological resource use,natural system modification","drugs":["紫檀"]},{"name":"Pterocarpus indicus Willd.","link":"https://kgraph.sg/polyglot/?drug=CDN18140","threat":"residential and commercial development,agriculture and aquaculture,biological resource use","drugs":["紫檀"]},{"name":"Tectona grandis L.f.","link":"https://kgraph.sg/polyglot/?drug=CDN18189","threat":"residential and commercial development,agriculture and aquaculture,biological resource use","drugs":["紫柚木"]}],"LC":[{"name":"Centaurium pulchellum var. altaicum (Griseb.) Cufod.","link":"https://kgraph.sg/polyglot/?drug=CDN00021","threat":"","drugs":["埃蕾","东北埃蕾"]},{"name":"Blumea balsamifera (L.) DC.","link":"https://kgraph.sg/polyglot/?drug=CDN00025","threat":"","drugs":["艾纳香","艾纳香根","大风艾"]},{"name":"Munronia pinnata (Wall.) W.Theob.","link":"https://kgraph.sg/polyglot/?drug=CDN00034","threat":"","drugs":["矮陀陀","滇地黄连","花叶矮沱沱","花叶矮陀陀","七叶仔"]},{"name":"Eucalyptus globulus Labill.","link":"https://kgraph.sg/polyglot/?drug=CDN00064","threat":"","drugs":["桉树果","桉叶","桉油","蓝桉"]},{"name":"Styrax tonkinensis (Pierre) Craib ex Hartwich","link":"https://kgraph.sg/polyglot/?drug=CDN00066","threat":"","drugs":["安息香"]},{"name":"Styrax benzoin Dryand.","link":"https://kgraph.sg/polyglot/?drug=CDN00066","threat":"","drugs":["安息香"]},{"name":"Liriodendron tulipifera L.","link":"https://kgraph.sg/polyglot/?drug=CDN00074","threat":"","drugs":["凹朴皮","鹅掌揪根"]},{"name":"Croton tiglium L.","link":"https://kgraph.sg/polyglot/?drug=CDN00096","threat":"","drugs":["巴豆","巴豆壳","巴豆树根","巴豆叶","巴豆油"]},{"name":"Buddleja asiatica Lour.","link":"https://kgraph.sg/polyglot/?drug=CDN00117","threat":"","drugs":["白背枫","白鱼尾","白鱼尾果"]},{"name":"Mallotus apelta (Lour.) Müll.Arg.","link":"https://kgraph.sg/polyglot/?drug=CDN00124","threat":"","drugs":["白背叶","白背叶根"]},{"name":"Trifolium repens L.","link":"https://kgraph.sg/polyglot/?drug=CDN00159","threat":"","drugs":["白车轴草","三消草"]},{"name":"Flueggea virosa (Roxb. ex Willd.) Royle","link":"https://kgraph.sg/polyglot/?drug=CDN00193","threat":"","drugs":["白饭树","白饭树根"]},{"name":"Echinochloa crus-galli (L.) P.Beauv.","link":"https://kgraph.sg/polyglot/?drug=CDN00205","threat":"","drugs":["稗根苗","稗米"]},{"name":"Syringa vulgaris L.","link":"https://kgraph.sg/polyglot/?drug=CDN00256","threat":"","drugs":["白花丁香"]},{"name":"Bacopa monnieri (L.) Wettst.","link":"https://kgraph.sg/polyglot/?drug=CDN00292","threat":"","drugs":["白花猪母菜"]},{"name":"Lithocarpus dealbatus (Hook.f. & Thomson ex Miq.) Rehder","link":"https://kgraph.sg/polyglot/?drug=CDN00437","threat":"","drugs":["白皮柯"]},{"name":"Fraxinus malacophylla Hemsl.","link":"https://kgraph.sg/polyglot/?drug=CDN00450","threat":"","drugs":["白枪杆","白枪杆根"]},{"name":"Rhododendron tomentosum Harmaja","link":"https://kgraph.sg/polyglot/?drug=CDN00477","threat":"","drugs":["白山苔","杜香","宽叶杜香"]},{"name":"Punica granatum L.","link":"https://kgraph.sg/polyglot/?drug=CDN00491","threat":"","drugs":["白石榴根","白石榴花","白石英","石榴根","石榴根皮"]},{"name":"Dictamnus albus L.","link":"https://kgraph.sg/polyglot/?drug=CDN00557","threat":"","drugs":["白鲜皮"]},{"name":"Populus tremula L.","link":"https://kgraph.sg/polyglot/?drug=CDN00566","threat":"","drugs":["白杨树根皮","白杨树皮","白杨叶","白杨枝","山白龙"]},{"name":"Castanopsis delavayi Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN00621","threat":"","drugs":["白猪栗","白猪栗根","高山栲"]},{"name":"Lindernia procumbens (Krock.) Borbás","link":"https://kgraph.sg/polyglot/?drug=CDN00623","threat":"","drugs":["白猪母菜"]},{"name":"Alangium chinense (Lour.) Harms","link":"https://kgraph.sg/polyglot/?drug=CDN00633","threat":"","drugs":["八角枫","八角枫根","八角枫花","八角枫叶"]},{"name":"Boehmeria siamensis Craib","link":"https://kgraph.sg/polyglot/?drug=CDN00668","threat":"","drugs":["八楞麻","野苎麻"]},{"name":"Pterospermum lanceifolium Roxb. ex DC.","link":"https://kgraph.sg/polyglot/?drug=CDN00706","threat":"","drugs":["半枫荷叶"]},{"name":"Cypripedium guttatum Sw.","link":"https://kgraph.sg/polyglot/?drug=CDN00727","threat":"","drugs":["斑花杓兰"]},{"name":"Strobocalyx solanifolia Sch.Bip.","link":"https://kgraph.sg/polyglot/?drug=CDN00734","threat":"","drugs":["斑鸠木"]},{"name":"Carpinus cordata Blume","link":"https://kgraph.sg/polyglot/?drug=CDN00744","threat":"","drugs":["半拉子"]},{"name":"Goodyera repens (L.) R.Br.","link":"https://kgraph.sg/polyglot/?drug=CDN00764","threat":"","drugs":["斑叶兰"]},{"name":"Syringa reticulata subsp. amurensis (Rupr.) P.S.Green & M.C.Chang","link":"https://kgraph.sg/polyglot/?drug=CDN00798","threat":"","drugs":["暴马子"]},{"name":"Galium aparine L.","link":"https://kgraph.sg/polyglot/?drug=CDN00839","threat":"","drugs":["八仙草"]},{"name":"Cryptocoryne crispatula var. yunnanensis (H.Li) H.Li & N.Jacobsen","link":"https://kgraph.sg/polyglot/?drug=CDN00841","threat":"","drugs":["八仙过海"]},{"name":"Polygonum aviculare L.","link":"https://kgraph.sg/polyglot/?drug=CDN00920","threat":"","drugs":["萹蓄"]},{"name":"Gymnosporia diversifolia Maxim.","link":"https://kgraph.sg/polyglot/?drug=CDN00925","threat":"","drugs":["变叶美登木"]},{"name":"Ficus variolosa Lindl. ex Benth.","link":"https://kgraph.sg/polyglot/?drug=CDN00926","threat":"","drugs":["变叶榕"]},{"name":"Eugenia uniflora L.","link":"https://kgraph.sg/polyglot/?drug=CDN00931","threat":"","drugs":["扁樱桃"]},{"name":"Parkinsonia aculeata L.","link":"https://kgraph.sg/polyglot/?drug=CDN00933","threat":"","drugs":["扁轴木"]},{"name":"Litsea cubeba (Lour.) Pers.","link":"https://kgraph.sg/polyglot/?drug=CDN00950","threat":"","drugs":["荜澄茄","澄茄子","豆豉姜","山苍子","山苍子叶"]},{"name":"Meliosma rigida Siebold & Zucc.","link":"https://kgraph.sg/polyglot/?drug=CDN00983","threat":"","drugs":["笔罗子","灵寿茨"]},{"name":"Myroxylon balsamum (L.) Harms","link":"https://kgraph.sg/polyglot/?drug=CDN00986","threat":"","drugs":["秘鲁香胶"]},{"name":"Eleocharis dulcis (Burm.f.) Trin. ex Hensch.","link":"https://kgraph.sg/polyglot/?drug=CDN01023","threat":"","drugs":["荸荠","通天草"]},{"name":"Hellenia speciosa (J.Koenig) S.R.Dutta","link":"https://kgraph.sg/polyglot/?drug=CDN01031","threat":"","drugs":["闭鞘姜","樟柳头"]},{"name":"Saurauia napaulensis DC.","link":"https://kgraph.sg/polyglot/?drug=CDN01039","threat":"","drugs":["鼻涕果","铜皮"]},{"name":"Equisetum ramosissimum Desf.","link":"https://kgraph.sg/polyglot/?drug=CDN01041","threat":"","drugs":["笔筒草","节节草"]},{"name":"Thelypteris dentata (Forssk.) E.P.St.John","link":"https://kgraph.sg/polyglot/?drug=CDN01057","threat":"","drugs":["篦子舒筋草"]},{"name":"Polystichum braunii (Spenn.) Fée","link":"https://kgraph.sg/polyglot/?drug=CDN01115","threat":"","drugs":["布朗耳蕨"]},{"name":"Litsea glutinosa (Lour.) C.B.Rob.","link":"https://kgraph.sg/polyglot/?drug=CDN01146","threat":"","drugs":["残槁蔃","潺槁树"]},{"name":"Acorus calamus L.","link":"https://kgraph.sg/polyglot/?drug=CDN01153","threat":"","drugs":["藏菖蒲","水菖蒲"]},{"name":"Carum carvi L.","link":"https://kgraph.sg/polyglot/?drug=CDN01165","threat":"","drugs":["藏茴香","青海防风"]},{"name":"Abies delavayi Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN01176","threat":"","drugs":["苍山冷杉","冷杉果"]},{"name":"Poa pratensis L.","link":"https://kgraph.sg/polyglot/?drug=CDN01218","threat":"","drugs":["草地早熟禾"]},{"name":"Hedychium spicatum Sm.","link":"https://kgraph.sg/polyglot/?drug=CDN01228","threat":"","drugs":["草果药","土良姜"]},{"name":"Ludwigia hyssopifolia (G.Don) Exell","link":"https://kgraph.sg/polyglot/?drug=CDN01240","threat":"","drugs":["草龙","草龙根"]},{"name":"Equisetum pratense Ehrh.","link":"https://kgraph.sg/polyglot/?drug=CDN01259","threat":"","drugs":["草问荆"]},{"name":"Bistorta officinalis subsp. officinalis","link":"https://kgraph.sg/polyglot/?drug=CDN01271","threat":"","drugs":["草血竭"]},{"name":"Aphananthe aspera (Thunb.) Planch.","link":"https://kgraph.sg/polyglot/?drug=CDN01278","threat":"","drugs":["糙叶树皮"]},{"name":"Cinnamomum tamala (Buch.-Ham.) T.Nees & C.H.Eberm.","link":"https://kgraph.sg/polyglot/?drug=CDN01300","threat":"agriculture and aquaculture","drugs":["柴桂","川桂"]},{"name":"Alysicarpus bupleurifolius (L.) DC.","link":"https://kgraph.sg/polyglot/?drug=CDN01306","threat":"","drugs":["柴胡叶链荚豆"]},{"name":"Clerodendrum indicum (L.) Kuntze","link":"https://kgraph.sg/polyglot/?drug=CDN01361","threat":"agriculture and aquaculture","drugs":["长管假茉莉"]},{"name":"Pinus pumila (Pall.) Regel","link":"https://kgraph.sg/polyglot/?drug=CDN01380","threat":"agriculture and aquaculture","drugs":["长松"]},{"name":"Debregeasia longifolia (Burm.f.) Wedd.","link":"https://kgraph.sg/polyglot/?drug=CDN01392","threat":"","drugs":["长叶水麻"]},{"name":"Cornus oblonga Wall.","link":"https://kgraph.sg/polyglot/?drug=CDN01398","threat":"","drugs":["长圆叶梾木枝叶","黄皮"]},{"name":"Camellia oleifera C.Abel","link":"https://kgraph.sg/polyglot/?drug=CDN01439","threat":"residential and commercial development","drugs":["茶油","茶油粑","油茶","油茶根","油茶花"]},{"name":"Tamarix chinensis Lour.","link":"https://kgraph.sg/polyglot/?drug=CDN01468","threat":"","drugs":["柽柳","西河柳"]},{"name":"Plantago major L.","link":"https://kgraph.sg/polyglot/?drug=CDN01505","threat":"","drugs":["车前草"]},{"name":"Dodonaea viscosa Jacq.","link":"https://kgraph.sg/polyglot/?drug=CDN01514","threat":"","drugs":["车桑仔","车桑子根","车桑子叶"]},{"name":"Alnus japonica (Thunb.) Steud.","link":"https://kgraph.sg/polyglot/?drug=CDN01591","threat":"","drugs":["赤扬","赤杨"]},{"name":"Pterospermum acerifolium (L.) Willd.","link":"https://kgraph.sg/polyglot/?drug=CDN01612","threat":"","drugs":["翅子木"]},{"name":"Fraxinus chinensis Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN01613","threat":"","drugs":["虫白蜡","秦皮"]},{"name":"Juniperus sabina L.","link":"https://kgraph.sg/polyglot/?drug=CDN01636","threat":"","drugs":["臭柏","沙地柏","圆柏果"]},{"name":"Ruta graveolens L.","link":"https://kgraph.sg/polyglot/?drug=CDN01638","threat":"","drugs":["臭草","芸香"]},{"name":"Clausena excavata Burm.f.","link":"https://kgraph.sg/polyglot/?drug=CDN01649","threat":"","drugs":["臭黄皮","山黄皮"]},{"name":"Abies nephrolepis (Trautv.) Maxim.","link":"https://kgraph.sg/polyglot/?drug=CDN01658","threat":"","drugs":["臭冷杉"]},{"name":"Rhamnus davurica Pall.","link":"https://kgraph.sg/polyglot/?drug=CDN01662","threat":"","drugs":["臭李皮","臭李子","鼠李"]},{"name":"Symplocarpus foetidus (L.) Salisb. ex W.P.C.Barton","link":"https://kgraph.sg/polyglot/?drug=CDN01678","threat":"","drugs":["臭菘","臭菘叶","臭菘种子"]},{"name":"Cinnamomum glanduliferum (Wall.) Meisn.","link":"https://kgraph.sg/polyglot/?drug=CDN01693","threat":"","drugs":["臭樟"]},{"name":"Alnus ferdinandi-coburgii C.K.Schneid.","link":"https://kgraph.sg/polyglot/?drug=CDN01704","threat":"","drugs":["川滇桤木"]},{"name":"Cornus chinensis Wangerin","link":"https://kgraph.sg/polyglot/?drug=CDN01707","threat":"","drugs":["川鄂山茱萸"]},{"name":"Pyrus pashia Buch.-Ham. ex D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN01717","threat":"","drugs":["川梨"]},{"name":"Melia azedarach L.","link":"https://kgraph.sg/polyglot/?drug=CDN01718","threat":"","drugs":["川楝子","苦楝花","苦楝寄生","苦楝皮","苦楝叶"]},{"name":"Ailanthus altissima (Mill.) Swingle","link":"https://kgraph.sg/polyglot/?drug=CDN01769","threat":"","drugs":["樗白皮","椿皮","樗叶","凤眼草","山蜡梅"]},{"name":"Broussonetia papyrifera (L.) L'Hér. ex Vent.","link":"https://kgraph.sg/polyglot/?drug=CDN01798","threat":"","drugs":["楮茎","楮皮间白汁","楮实","楮实子","楮树白皮"]},{"name":"Brasenia schreberi J.F.Gmel.","link":"https://kgraph.sg/polyglot/?drug=CDN01800","threat":"","drugs":["莼","莼菜"]},{"name":"Toona sinensis (A.Juss.) M.Roem.","link":"https://kgraph.sg/polyglot/?drug=CDN01802","threat":"","drugs":["椿白皮","春尖油","椿树花","椿叶","香椿"]},{"name":"Gymnosporia variabilis (Hemsl.) Loes.","link":"https://kgraph.sg/polyglot/?drug=CDN01851","threat":"","drugs":["刺茶美登木","刺山茶根皮","刺山茶果"]},{"name":"Sagittaria sagittifolia L.","link":"https://kgraph.sg/polyglot/?drug=CDN01855","threat":"","drugs":["慈菇"]},{"name":"Robinia pseudoacacia L.","link":"https://kgraph.sg/polyglot/?drug=CDN01876","threat":"","drugs":["刺槐","刺槐花"]},{"name":"Zanthoxylum acanthopodium DC.","link":"https://kgraph.sg/polyglot/?drug=CDN01879","threat":"","drugs":["刺花椒"]},{"name":"Tribulus terrestris L.","link":"https://kgraph.sg/polyglot/?drug=CDN01891","threat":"","drugs":["刺蒺藜","蒺藜","蒺藜根","蒺藜花","蒺藜苗"]},{"name":"Carissa spinarum L.","link":"https://kgraph.sg/polyglot/?drug=CDN01893","threat":"","drugs":["刺郎果","老虎刺"]},{"name":"Aralia elata (Miq.) Seem.","link":"https://kgraph.sg/polyglot/?drug=CDN01913","threat":"","drugs":["刺龙牙","龙牙楤木","龙牙楤木果","龙牙楤木叶"]},{"name":"Scolopia chinensis (Lour.) Clos","link":"https://kgraph.sg/polyglot/?drug=CDN01923","threat":"","drugs":["莿（木冬）"]},{"name":"Euphorbia milii Des Moul.","link":"https://kgraph.sg/polyglot/?drug=CDN01925","threat":"","drugs":["刺蓬花","铁海棠","铁海棠花"]},{"name":"Trevesia palmata (Roxb. ex Lindl.) Vis.","link":"https://kgraph.sg/polyglot/?drug=CDN01951","threat":"","drugs":["刺通草"]},{"name":"Erythrina arborescens Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN01953","threat":"","drugs":["刺桐叶","海桐皮","乔木刺桐"]},{"name":"Erythrina variegata L.","link":"https://kgraph.sg/polyglot/?drug=CDN01953","threat":"","drugs":["刺桐叶","海桐皮"]},{"name":"Brassaiopsis glomerulata (Blume) Regel","link":"https://kgraph.sg/polyglot/?drug=CDN01967","threat":"","drugs":["刺鸭脚木","鸭脚罗伞"]},{"name":"Cycas rumphii Miq.","link":"https://kgraph.sg/polyglot/?drug=CDN01969","threat":"","drugs":["刺叶苏铁"]},{"name":"Cephalotaxus harringtonia (Knight ex J.Forbes) K.Koch","link":"https://kgraph.sg/polyglot/?drug=CDN02017","threat":"","drugs":["粗榧根","粗榧枝叶"]},{"name":"Cephalotaxus fortunei Hook.","link":"https://kgraph.sg/polyglot/?drug=CDN02019","threat":"","drugs":["粗榧子","三尖杉","三尖杉根","血榧"]},{"name":"Schoepfia jasminodora Siebold & Zucc.","link":"https://kgraph.sg/polyglot/?drug=CDN02024","threat":"","drugs":["脆骨风"]},{"name":"Rauvolfia vomitoria Wennberg","link":"https://kgraph.sg/polyglot/?drug=CDN02035","threat":"","drugs":["催吐萝芙木"]},{"name":"Mallotus philippensis (Lam.) Müll.Arg.","link":"https://kgraph.sg/polyglot/?drug=CDN02040","threat":"","drugs":["粗糠柴"]},{"name":"Vicia sativa L.","link":"https://kgraph.sg/polyglot/?drug=CDN02092","threat":"","drugs":["大巢菜","野豌豆"]},{"name":"Embelia vestita Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN02096","threat":"","drugs":["打虫果","矩叶酸藤果","了哥利","马桂花"]},{"name":"Bridelia stipularis (L.) Blume","link":"https://kgraph.sg/polyglot/?drug=CDN02098","threat":"","drugs":["大串连果"]},{"name":"Campylotropis trigonoclada (Franch.) Schindl.","link":"https://kgraph.sg/polyglot/?drug=CDN02126","threat":"","drugs":["大发表","爬山豆根"]},{"name":"Monosis parishii (Hook.f.) H.Rob. & Skvarla","link":"https://kgraph.sg/polyglot/?drug=CDN02130","threat":"","drugs":["大发散"]},{"name":"Rhamnus napalensis (Wall.) M.A.Lawson","link":"https://kgraph.sg/polyglot/?drug=CDN02139","threat":"","drugs":["大风药","大风药叶"]},{"name":"Hydnocarpus castaneus Hook.f. & Thomson","link":"https://kgraph.sg/polyglot/?drug=CDN02141","threat":"","drugs":["大风子","大风子油"]},{"name":"Pistia stratiotes L.","link":"https://kgraph.sg/polyglot/?drug=CDN02149","threat":"","drugs":["大浮萍","大薸"]},{"name":"Ulmus macrocarpa Hance","link":"https://kgraph.sg/polyglot/?drug=CDN02164","threat":"","drugs":["大果榆","芜荑","芜荑酱"]},{"name":"Donella lanceolata (Blume) Aubrév.","link":"https://kgraph.sg/polyglot/?drug=CDN02173","threat":"","drugs":["大横纹"]},{"name":"Sphaeranthus africanus L.","link":"https://kgraph.sg/polyglot/?drug=CDN02233","threat":"","drugs":["戴星草"]},{"name":"Bidens frondosa L.","link":"https://kgraph.sg/polyglot/?drug=CDN02281","threat":"","drugs":["大狼把草"]},{"name":"Persicaria lapathifolia (L.) Delarbre","link":"https://kgraph.sg/polyglot/?drug=CDN02308","threat":"","drugs":["大马蓼","辣蓼草","鱼蓼","猪蓼子草"]},{"name":"Tabernaemontana bufalina Lour.","link":"https://kgraph.sg/polyglot/?drug=CDN02346","threat":"","drugs":["单根木"]},{"name":"Wrightia pubescens R.Br.","link":"https://kgraph.sg/polyglot/?drug=CDN02412","threat":"","drugs":["倒吊笔","倒吊笔叶","倒吊蜡烛"]},{"name":"Symplocos lancifolia Siebold & Zucc.","link":"https://kgraph.sg/polyglot/?drug=CDN02435","threat":"","drugs":["刀灰树"]},{"name":"Heptapleurum delavayi Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN02457","threat":"","drugs":["大泡通","大泡通皮","大泡通叶","绒毛鸭脚木"]},{"name":"Isatis tinctoria L.","link":"https://kgraph.sg/polyglot/?drug=CDN02479","threat":"","drugs":["大青叶"]},{"name":"Endospermum chinense Benth.","link":"https://kgraph.sg/polyglot/?drug=CDN02504","threat":"","drugs":["大树跌打"]},{"name":"Cleidion brevipetiolatum Pax & K.Hoffm.","link":"https://kgraph.sg/polyglot/?drug=CDN02509","threat":"","drugs":["大树三台"]},{"name":"Polyspora axillaris (Roxb. ex Ker Gawl.) Sweet","link":"https://kgraph.sg/polyglot/?drug=CDN02525","threat":"","drugs":["大头茶","大头茶果"]},{"name":"Cinnamomum bejolghota var. bejolghota","link":"https://kgraph.sg/polyglot/?drug=CDN02627","threat":"","drugs":["大叶山桂"]},{"name":"Tinomiscium petiolare Miers ex Hook.f. & Thomson","link":"https://kgraph.sg/polyglot/?drug=CDN02634","threat":"","drugs":["大叶藤"]},{"name":"Neolitsea cambodiana Lecomte","link":"https://kgraph.sg/polyglot/?drug=CDN02646","threat":"","drugs":["大叶樟"]},{"name":"Lagerstroemia speciosa (L.) Pers.","link":"https://kgraph.sg/polyglot/?drug=CDN02649","threat":"","drugs":["大叶紫薇"]},{"name":"Ziziphus jujuba Mill.","link":"https://kgraph.sg/polyglot/?drug=CDN02665","threat":"","drugs":["大枣","棘刺花","棘叶","棘针","酸枣根"]},{"name":"Gleditsia sinensis Lam.","link":"https://kgraph.sg/polyglot/?drug=CDN02669","threat":"","drugs":["大皂角","皂荚","皂角刺","皂荚叶","皂荚子"]},{"name":"Alstonia scholaris (L.) R.Br.","link":"https://kgraph.sg/polyglot/?drug=CDN02689","threat":"","drugs":["灯台树","象皮木"]},{"name":"Cornus controversa Hemsl.","link":"https://kgraph.sg/polyglot/?drug=CDN02689","threat":"","drugs":["灯台树","灯台树果"]},{"name":"Juncus effusus L.","link":"https://kgraph.sg/polyglot/?drug=CDN02692","threat":"","drugs":["灯心草","灯心草根"]},{"name":"Juniperus indica var. indica","link":"https://kgraph.sg/polyglot/?drug=CDN02704","threat":"","drugs":["滇藏方枝柏"]},{"name":"Lindera erythrocarpa Makino","link":"https://kgraph.sg/polyglot/?drug=CDN02789","threat":"","drugs":["钓樟根皮","钓樟枝叶","詹糖香"]},{"name":"Selaginella kraussiana (Kunze) A.Braun","link":"https://kgraph.sg/polyglot/?drug=CDN02796","threat":"","drugs":["地柏","蜂药"]},{"name":"Elephantopus scaber L.","link":"https://kgraph.sg/polyglot/?drug=CDN02817","threat":"","drugs":["地胆草","苦地胆","苦地胆根"]},{"name":"Xylosma longifolia Clos","link":"https://kgraph.sg/polyglot/?drug=CDN02827","threat":"","drugs":["跌破勒"]},{"name":"Acer pictum subsp. mono (Maxim.) H.Ohashi","link":"https://kgraph.sg/polyglot/?drug=CDN02886","threat":"","drugs":["地锦槭","五龙皮"]},{"name":"Raphanus raphanistrum subsp. sativus (L.) Domin","link":"https://kgraph.sg/polyglot/?drug=CDN02889","threat":"","drugs":["地骷髅","枯萝卜","莱菔","莱菔叶","莱菔缨"]},{"name":"Pinus yunnanensis var. pygmaea (Hsueh f.) Hsueh f.","link":"https://kgraph.sg/polyglot/?drug=CDN02949","threat":"","drugs":["地盘松球"]},{"name":"Burmannia coelestis D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN02967","threat":"","drugs":["地沙","三品一枝花"]},{"name":"Neillia thyrsiflora D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN02984","threat":"","drugs":["地棠花"]},{"name":"Urena lobata L.","link":"https://kgraph.sg/polyglot/?drug=CDN02985","threat":"","drugs":["地桃花"]},{"name":"Claoxylon indicum (Reinw. ex Blume) Hassk.","link":"https://kgraph.sg/polyglot/?drug=CDN02988","threat":"","drugs":["丢了棒"]},{"name":"Taxus cuspidata Siebold & Zucc.","link":"https://kgraph.sg/polyglot/?drug=CDN03023","threat":"","drugs":["东北红豆杉","紫杉"]},{"name":"Caryota mitis Lour.","link":"https://kgraph.sg/polyglot/?drug=CDN03098","threat":"","drugs":["董棕粉"]},{"name":"Helicia nilagirica Bedd.","link":"https://kgraph.sg/polyglot/?drug=CDN03122","threat":"","drugs":["豆腐渣果","豆腐渣果根"]},{"name":"Scutellaria galericulata L.","link":"https://kgraph.sg/polyglot/?drug=CDN03127","threat":"","drugs":["兜冠黄共享"]},{"name":"Cypripedium tibeticum King ex Rolfe","link":"https://kgraph.sg/polyglot/?drug=CDN03138","threat":"","drugs":["兜兰"]},{"name":"Pyrus calleryana Decne.","link":"https://kgraph.sg/polyglot/?drug=CDN03140","threat":"","drugs":["豆梨","鹿梨","鹿梨根皮"]},{"name":"Anacardium occidentale L.","link":"https://kgraph.sg/polyglot/?drug=CDN03143","threat":"","drugs":["都咸子","都咸子树皮","鸡腰果"]},{"name":"Ficus tinctoria subsp. gibbosa (Blume) Corner","link":"https://kgraph.sg/polyglot/?drug=CDN03150","threat":"","drugs":["钭叶榕","斜叶榕","斜叶榕叶"]},{"name":"Alniphyllum fortunei (Hemsl.) Makino","link":"https://kgraph.sg/polyglot/?drug=CDN03153","threat":"","drugs":["豆渣树"]},{"name":"Quercus serrata Murray","link":"https://kgraph.sg/polyglot/?drug=CDN03159","threat":"","drugs":["短柄枹栎虫瘿"]},{"name":"Leea macrophylla Roxb. ex Hornem.","link":"https://kgraph.sg/polyglot/?drug=CDN03169","threat":"","drugs":["端哼"]},{"name":"Tilia tuan Szyszył.","link":"https://kgraph.sg/polyglot/?drug=CDN03176","threat":"","drugs":["椴树","椴树根"]},{"name":"Senna alata (L.) Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN03221","threat":"","drugs":["对叶豆"]},{"name":"Ficus hispida L.f.","link":"https://kgraph.sg/polyglot/?drug=CDN03229","threat":"","drugs":["对叶榕","牛奶树","牛奶树子"]},{"name":"Strophanthus hispidus DC.","link":"https://kgraph.sg/polyglot/?drug=CDN03235","threat":"","drugs":["毒箭羊角拗"]},{"name":"Pyrus betulifolia Bunge","link":"https://kgraph.sg/polyglot/?drug=CDN03269","threat":"","drugs":["杜梨","棠梨","棠梨枝叶"]},{"name":"Turraea pubescens Hell.","link":"https://kgraph.sg/polyglot/?drug=CDN03270","threat":"","drugs":["杜楝"]},{"name":"Helwingia chinensis var. crenata (Lingelsh. ex H.Limpr.) W.P.Fang","link":"https://kgraph.sg/polyglot/?drug=CDN03273","threat":"","drugs":["钝齿青荚叶"]},{"name":"Cypripedium macranthos Sw.","link":"https://kgraph.sg/polyglot/?drug=CDN03279","threat":"","drugs":["敦盛草","蜈蚣七"]},{"name":"Carpinus polyneura Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN03310","threat":"","drugs":["多脉鹅耳枥"]},{"name":"Lithocarpus polystachyus (Wall. ex A.DC.) Rehder","link":"https://kgraph.sg/polyglot/?drug=CDN03315","threat":"","drugs":["多穗石柯","多穗石柯根","多穗石柯果","多穗石柯茎","多穗石柯叶"]},{"name":"Cicuta virosa L.","link":"https://kgraph.sg/polyglot/?drug=CDN03327","threat":"","drugs":["毒芹","毒芹根"]},{"name":"Juniperus rigida Siebold & Zucc.","link":"https://kgraph.sg/polyglot/?drug=CDN03331","threat":"","drugs":["杜松"]},{"name":"Myrsine seguinii H.Lév.","link":"https://kgraph.sg/polyglot/?drug=CDN03386","threat":"","drugs":["鹅骨梢","密花树"]},{"name":"Senegalia catechu (L.f.) P.J.H.Hurter & Mabb.","link":"https://kgraph.sg/polyglot/?drug=CDN03418","threat":"","drugs":["儿茶","孩儿茶"]},{"name":"Ammannia auriculata Willd.","link":"https://kgraph.sg/polyglot/?drug=CDN03433","threat":"","drugs":["耳水苋"]},{"name":"Curcuma aeruginosa Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN03452","threat":"","drugs":["莪术","郁金"]},{"name":"Commelina benghalensis L.","link":"https://kgraph.sg/polyglot/?drug=CDN03482","threat":"","drugs":["饭包草","马耳草"]},{"name":"Canarium bengalense Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN03497","threat":"","drugs":["方榄"]},{"name":"Antidesma ghaesembilla Gaertn.","link":"https://kgraph.sg/polyglot/?drug=CDN03500","threat":"","drugs":["方叶五月茶"]},{"name":"Annona squamosa L.","link":"https://kgraph.sg/polyglot/?drug=CDN03506","threat":"","drugs":["番荔枝"]},{"name":"Annona reticulata L.","link":"https://kgraph.sg/polyglot/?drug=CDN03507","threat":"","drugs":["番荔枝根","番荔枝叶","牛心果"]},{"name":"Psidium guajava L.","link":"https://kgraph.sg/polyglot/?drug=CDN03517","threat":"","drugs":["番石榴","番石榴干","番石榴根","番石榴树皮","番石榴叶"]},{"name":"Senna alexandrina Mill.","link":"https://kgraph.sg/polyglot/?drug=CDN03538","threat":"","drugs":["番泻叶"]},{"name":"Torreya grandis Fortune ex Lindl.","link":"https://kgraph.sg/polyglot/?drug=CDN03552","threat":"","drugs":["榧根皮","榧花","榧枝叶","榧子"]},{"name":"Ormosia fordiana Oliv.","link":"https://kgraph.sg/polyglot/?drug=CDN03556","threat":"","drugs":["肥荚红豆","青竹蛇"]},{"name":"Dendropanax chevalieri (R.Vig.) Merr.","link":"https://kgraph.sg/polyglot/?drug=CDN03620","threat":"","drugs":["枫荷梨"]},{"name":"Delonix regia (Bojer ex Hook.) Raf.","link":"https://kgraph.sg/polyglot/?drug=CDN03626","threat":"","drugs":["凤凰木"]},{"name":"Pterocarya stenoptera C.DC.","link":"https://kgraph.sg/polyglot/?drug=CDN03638","threat":"","drugs":["枫柳皮","枫杨","麻柳果","麻柳树根","麻柳叶"]},{"name":"Liquidambar formosana Hance","link":"https://kgraph.sg/polyglot/?drug=CDN03655","threat":"","drugs":["枫树","枫香树根","枫香树皮","枫香树叶","枫香脂"]},{"name":"Yucca gloriosa L.","link":"https://kgraph.sg/polyglot/?drug=CDN03674","threat":"","drugs":["凤尾兰"]},{"name":"Cephalanthus occidentalis L.","link":"https://kgraph.sg/polyglot/?drug=CDN03693","threat":"","drugs":["风箱树根","风箱树花","风箱树叶"]},{"name":"Juglans regia L.","link":"https://kgraph.sg/polyglot/?drug=CDN03740","threat":"","drugs":["分心木","核桃青龙皮","核桃仁","核桃叶","胡桃根"]},{"name":"Citrus medica L.","link":"https://kgraph.sg/polyglot/?drug=CDN03754","threat":"","drugs":["佛手","佛手柑","佛手柑根","佛手花","佛手露"]},{"name":"Spirodela polyrhiza (L.) Schleid.","link":"https://kgraph.sg/polyglot/?drug=CDN03808","threat":"","drugs":["浮萍"]},{"name":"Lemna minor L.","link":"https://kgraph.sg/polyglot/?drug=CDN03811","threat":"","drugs":["釜脐墨"]},{"name":"Sonneratia alba Sm.","link":"https://kgraph.sg/polyglot/?drug=CDN03870","threat":"","drugs":["伽果"]},{"name":"Glycyrrhiza glabra L.","link":"https://kgraph.sg/polyglot/?drug=CDN03876","threat":"","drugs":["甘草","甘草节","甘草梢","甘草头"]},{"name":"Eurya groffii Merr.","link":"https://kgraph.sg/polyglot/?drug=CDN03898","threat":"","drugs":["岗柃","岗柃叶"]},{"name":"Mallotus repandus (Rottler) Müll.Arg.","link":"https://kgraph.sg/polyglot/?drug=CDN03912","threat":"","drugs":["杠香藤","山龙眼"]},{"name":"Canarium album (Lour.) DC.","link":"https://kgraph.sg/polyglot/?drug=CDN03930","threat":"","drugs":["橄榄","橄榄根","橄榄核","橄榄露","橄榄仁"]},{"name":"Toxicodendron vernicifluum (Stokes) F.A.Barkley","link":"https://kgraph.sg/polyglot/?drug=CDN03944","threat":"","drugs":["干漆","漆树根","漆树木心","漆树皮","漆叶"]},{"name":"Osyris lanceolata Hochst. & Steud.","link":"https://kgraph.sg/polyglot/?drug=CDN03969","threat":"","drugs":["干檀香","干檀香根","干檀香叶","甘土"]},{"name":"Juniperus squamata D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN04017","threat":"","drugs":["高山柏"]}],"NT":[{"name":"Liriodendron chinense (Hemsl.) Sarg.","link":"https://kgraph.sg/polyglot/?drug=CDN00074","threat":"agriculture and aquaculture，biological resource use","drugs":["凹朴皮","鹅掌揪根","鹅掌楸"]},{"name":"Pistacia vera L.","link":"https://kgraph.sg/polyglot/?drug=CDN00084","threat":"biological resource use","drugs":["阿月浑子","无名木皮"]},{"name":"Platycladus orientalis (L.) Franco","link":"https://kgraph.sg/polyglot/?drug=CDN00203","threat":"biological resource use","drugs":["柏根白皮","柏脂","柏枝节","柏子仁","侧柏叶"]},{"name":"Artocarpus hypargyreus Hance ex Benth.","link":"https://kgraph.sg/polyglot/?drug=CDN00212","threat":"residential and commercial development","drugs":["白桂木根","桂木干","桂木根","将军树"]},{"name":"Alisma gramineum Lej.","link":"https://kgraph.sg/polyglot/?drug=CDN01282","threat":"Residential and commercial development","drugs":["草泽泻"]},{"name":"Aralia spinifolia Merr.","link":"https://kgraph.sg/polyglot/?drug=CDN01968","threat":"residential and commercial development","drugs":["刺叶楤木"]},{"name":"Pterospermum grande Craib","link":"https://kgraph.sg/polyglot/?drug=CDN02177","threat":"agriculture and aquaculture","drugs":["大红毛叶"]},{"name":"Tulipa iliensis Regel","link":"https://kgraph.sg/polyglot/?drug=CDN04285","threat":"agriculture and aquaculture","drugs":["光慈姑"]},{"name":"Ormosia hosiei Hemsl. & E.H.Wilson","link":"https://kgraph.sg/polyglot/?drug=CDN05100","threat":"agriculture and aquaculture","drugs":["红豆","红豆树"]},{"name":"Carallia diplopetala Hand.-Mazz.","link":"https://kgraph.sg/polyglot/?drug=CDN07328","threat":"——","drugs":["锯齿王","锯齿王根"]},{"name":"Medicago archiducis-nicolai Širj.","link":"https://kgraph.sg/polyglot/?drug=CDN07391","threat":"residential and commercial development，agriculture and aquaculture","drugs":["矩镰荚苜蓿"]},{"name":"Cryptomeria japonica (Thunb. ex L.f.) D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN08311","threat":"biological resource use ，climate change","drugs":["柳杉","柳杉叶"]},{"name":"Gossypium arboreum L.","link":"https://kgraph.sg/polyglot/?drug=CDN09637","threat":"climate change and severe weather","drugs":["棉花","棉花根","棉花壳","棉花子"]},{"name":"Cajanus cajan (L.) Huth","link":"https://kgraph.sg/polyglot/?drug=CDN09844","threat":"residential and commercial development","drugs":["木豆","木豆叶"]},{"name":"Cistanche deserticola Ma","link":"https://kgraph.sg/polyglot/?drug=CDN11342","threat":"biological resource use","drugs":["肉苁蓉"]},{"name":"Boswellia sacra Flück.","link":"https://kgraph.sg/polyglot/?drug=CDN11416","threat":"agriculture and aquaculture，biological resource use","drugs":["乳香"]},{"name":"Dypsis lutescens (H.Wendl.) Beentje & J.Dransf.","link":"https://kgraph.sg/polyglot/?drug=CDN11578","threat":"agriculture and aquaculture，biological resource use","drugs":["散尾葵"]},{"name":"Abies holophylla Maxim.","link":"https://kgraph.sg/polyglot/?drug=CDN11988","threat":"biological resource use，natural system modification","drugs":["杉松"]},{"name":"Rauvolfia serpentina (L.) Benth. ex Kurz","link":"https://kgraph.sg/polyglot/?drug=CDN12207","threat":"residential and commercial development，agriculture and aquaculture","drugs":["蛇根木"]},{"name":"Amentotaxus argotaenia (Hance) Pilg.","link":"https://kgraph.sg/polyglot/?drug=CDN13370","threat":"agriculture and aquaculture，biological resource use","drugs":["穗花杉根","穗花杉叶","穗花杉种子"]},{"name":"Eucalyptus camaldulensis Dehnh.","link":"https://kgraph.sg/polyglot/?drug=CDN15951","threat":"agriculture and aquaculture","drugs":["洋草果"]},{"name":"Keteleeria fortunei (A.Murray bis) Carrière","link":"https://kgraph.sg/polyglot/?drug=CDN16940","threat":"biological resource use","drugs":["油杉"]},{"name":"Nageia nagi (Thunb.) Kuntze","link":"https://kgraph.sg/polyglot/?drug=CDN17728","threat":"agriculture and aquaculture，biological resource use","drugs":["竹柏","竹柏根"]}],"DD":[{"name":"Prunus persica (L.) Batsch","link":"https://kgraph.sg/polyglot/?drug=CDN00091","threat":"biological resource use","drugs":["巴旦杏仁","碧桃干","桃根","桃花","桃胶"]},{"name":"Salix babylonica f. babylonica","link":"https://kgraph.sg/polyglot/?drug=CDN04761","threat":"","drugs":["旱柳"]},{"name":"Nelumbo nucifera Gaertn.","link":"https://kgraph.sg/polyglot/?drug=CDN04819","threat":"","drugs":["荷蒂","荷梗","荷花","荷叶","荷叶蒂"]},{"name":"Malus asiatica Nakai","link":"https://kgraph.sg/polyglot/?drug=CDN05455","threat":"","drugs":["花红叶","林檎","林檎根"]},{"name":"Styphnolobium japonicum (L.) Schott","link":"https://kgraph.sg/polyglot/?drug=CDN05459","threat":"","drugs":["槐白皮","槐根","槐花","槐角","槐胶"]},{"name":"Phellodendron amurense Rupr.","link":"https://kgraph.sg/polyglot/?drug=CDN05539","threat":"","drugs":["黄柏"]},{"name":"Abelmoschus manihot (L.) Medik.","link":"https://kgraph.sg/polyglot/?drug=CDN05831","threat":"","drugs":["黄蜀葵","黄蜀葵根","黄蜀葵花","黄蜀葵茎","黄蜀葵叶"]},{"name":"Abelmoschus manihot var. pungens (Roxb.) Hochr.","link":"https://kgraph.sg/polyglot/?drug=CDN05834","threat":"","drugs":["黄蜀葵花","黄蜀葵茎","黄蜀葵叶","黄蜀葵子","黄鼠狼"]},{"name":"Hedychium coronarium J.Koenig","link":"https://kgraph.sg/polyglot/?drug=CDN06373","threat":"","drugs":["姜花果实","路边姜"]},{"name":"Herminium monorchis (L.) R.Br.","link":"https://kgraph.sg/polyglot/?drug=CDN06522","threat":"","drugs":["角盘兰","人头七"]},{"name":"Prunus armeniaca L.","link":"https://kgraph.sg/polyglot/?drug=CDN07671","threat":"","drugs":["苦杏仁","杏花","杏仁","杏树根","杏树皮"]},{"name":"Opuntia ficus-indica (L.) Mill.","link":"https://kgraph.sg/polyglot/?drug=CDN08141","threat":"","drugs":["梨果仙人掌","神仙掌花","仙人杖","仙掌子","玉芙蓉"]},{"name":"Dimocarpus longan Lour.","link":"https://kgraph.sg/polyglot/?drug=CDN08494","threat":"","drugs":["龙眼根","龙眼核","龙眼花","龙眼壳","龙眼肉"]},{"name":"Alnus lanata Duthie ex Bean","link":"https://kgraph.sg/polyglot/?drug=CDN09361","threat":"","drugs":["毛桤"]},{"name":"Malus mandshurica (Maxim.) Kom. ex Skvortsov","link":"https://kgraph.sg/polyglot/?drug=CDN09379","threat":"","drugs":["毛山荆子"]},{"name":"Lespedeza thunbergii subsp. formosa (Vogel) H.Ohashi","link":"https://kgraph.sg/polyglot/?drug=CDN09482","threat":"","drugs":["马扫帚"]},{"name":"Gossypium herbaceum L.","link":"https://kgraph.sg/polyglot/?drug=CDN09637","threat":"","drugs":["棉花","棉花根","棉花壳","棉花子","棉籽"]},{"name":"Manihot esculenta Crantz","link":"https://kgraph.sg/polyglot/?drug=CDN09958","threat":"","drugs":["木薯"]},{"name":"Glechoma hederacea L.","link":"https://kgraph.sg/polyglot/?drug=CDN10432","threat":"","drugs":["欧活血丹"]},{"name":"Magnolia laevifolia (Y.W.Law & Y.F.Wu) Noot.","link":"https://kgraph.sg/polyglot/?drug=CDN10568","threat":"","drugs":["皮袋香","皮袋香根","山辛夷"]},{"name":"Camellia sinensis var. assamica (Royle ex Hook.) Steenis","link":"https://kgraph.sg/polyglot/?drug=CDN10688","threat":"","drugs":["普洱茶","普洱茶膏"]},{"name":"Leucomeris decora Kurz","link":"https://kgraph.sg/polyglot/?drug=CDN10771","threat":"","drugs":["枪花药"]},{"name":"Olea europaea L.","link":"https://kgraph.sg/polyglot/?drug=CDN10883","threat":"","drugs":["齐墩果"]},{"name":"Malus prunifolia (Willd.) Borkh.","link":"https://kgraph.sg/polyglot/?drug=CDN11162","threat":"","drugs":["楸子"]},{"name":"Bromus japonicus subsp. japonicus","link":"https://kgraph.sg/polyglot/?drug=CDN11217","threat":"","drugs":["雀麦","雀麦米"]},{"name":"Myristica fragrans Houtt.","link":"https://kgraph.sg/polyglot/?drug=CDN11345","threat":"","drugs":["肉豆蔻","肉豆蔻衣"]},{"name":"Magnolia yuyuanensis (Y.W.Law) V.S.Kumar","link":"https://kgraph.sg/polyglot/?drug=CDN11420","threat":"","drugs":["乳源木莲果"]},{"name":"Malus toringo (Siebold) de Vriese","link":"https://kgraph.sg/polyglot/?drug=CDN11598","threat":"","drugs":["三叶海棠"]},{"name":"Allium thunbergii G.Don","link":"https://kgraph.sg/polyglot/?drug=CDN11873","threat":"","drugs":["山韭"]},{"name":"Kaempferia galanga L.","link":"https://kgraph.sg/polyglot/?drug=CDN11943","threat":"","drugs":["山柰"]},{"name":"Wurfbainia villosa var. xanthioides (Wall. ex Baker) Škorničk. & A.D.Poulsen","link":"https://kgraph.sg/polyglot/?drug=CDN12145","threat":"","drugs":["砂仁","砂仁花","砂仁壳","缩砂蜜"]},{"name":"Gymnadenia conopsea (L.) R.Br.","link":"https://kgraph.sg/polyglot/?drug=CDN12657","threat":"","drugs":["手参","手掌参"]},{"name":"Limnophila aromatica (Lam.) Merr.","link":"https://kgraph.sg/polyglot/?drug=CDN12777","threat":"","drugs":["水芙蓉","止咳草"]},{"name":"Ligustrum pricei Hayata","link":"https://kgraph.sg/polyglot/?drug=CDN13146","threat":"","drugs":["四川苦丁茶","序梗女贞"]},{"name":"Asparagus cochinchinensis (Lour.) Merr.","link":"https://kgraph.sg/polyglot/?drug=CDN13621","threat":"","drugs":["天冬","天门冬"]},{"name":"Amomum subulatum Roxb.","link":"https://kgraph.sg/polyglot/?drug=CDN14706","threat":"","drugs":["香豆蔻"]},{"name":"Asparagus filicinus Buch.-Ham. ex D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN15952","threat":"","drugs":["羊齿天冬"]},{"name":"Averrhoa carambola L.","link":"https://kgraph.sg/polyglot/?drug=CDN16074","threat":"","drugs":["阳桃","阳桃根","阳桃花","阳桃叶"]},{"name":"Magnolia coco (Lour.) DC.","link":"https://kgraph.sg/polyglot/?drug=CDN16366","threat":"","drugs":["夜合花"]},{"name":"Cephalanthera erecta (Thunb.) Blume","link":"https://kgraph.sg/polyglot/?drug=CDN16772","threat":"","drugs":["银兰"]},{"name":"Asparagus brachyphyllus Turcz.","link":"https://kgraph.sg/polyglot/?drug=CDN17721","threat":"","drugs":["抓地龙"]}],"CR":[{"name":"Aristolochia westlandii Hemsl.","link":"https://kgraph.sg/polyglot/?drug=CDN00314","threat":"——","drugs":["百解马兜铃","白金果榄"]},{"name":"Panax ginseng C.A.Mey.","link":"https://kgraph.sg/polyglot/?drug=CDN01198","threat":"biological resource use","drugs":["参条","红参","人参","人参花","人参芦"]},{"name":"Aquilaria malaccensis Lam.","link":"https://kgraph.sg/polyglot/?drug=CDN01500","threat":"energy production and mining","drugs":["沉香"]},{"name":"Nardostachys jatamansi (D.Don) DC.","link":"https://kgraph.sg/polyglot/?drug=CDN03957","threat":"residential and commercial development，agriculture and aquaculture","drugs":["甘松"]},{"name":"Beta vulgaris subsp. vulgaris","link":"https://kgraph.sg/polyglot/?drug=CDN05271","threat":"residential and commercial development","drugs":["红牛皮菜","莙荙子","甜草"]},{"name":"Paphiopedilum micranthum Tang & F.T.Wang","link":"https://kgraph.sg/polyglot/?drug=CDN05979","threat":"residential commercial development biological esource use natuaral system modification","drugs":["花叶子"]},{"name":"Euphorbia prostrata Aiton","link":"https://kgraph.sg/polyglot/?drug=CDN10680","threat":"human intrusion and disturbance，invasive and other problematic pieces genes and diseases","drugs":["铺地草"]},{"name":"Viola tricolor L.","link":"https://kgraph.sg/polyglot/?drug=CDN11564","threat":"———","drugs":["三色堇"]},{"name":"Ammopiptanthus nanus (Popov) S.H.Cheng","link":"https://kgraph.sg/polyglot/?drug=CDN11637","threat":"energy production and mining","drugs":["沙冬青"]},{"name":"Glyptostrobus pensilis (D.Don) K.Koch","link":"https://kgraph.sg/polyglot/?drug=CDN12937","threat":"agriculture and aquaculture，energy production and mining，biological resource use","drugs":["水松","水松皮","水松球果","水松枝叶"]},{"name":"Paulownia kawakamii T.Itô","link":"https://kgraph.sg/polyglot/?drug=CDN13484","threat":"residential and commercial development，agriculture and aquaculture，biological resource use","drugs":["台湾泡桐","台湾泡桐叶"]},{"name":"Dendrobium officinale Kimura & Migo","link":"https://kgraph.sg/polyglot/?drug=CDN13846","threat":"——","drugs":["铁皮石斛"]},{"name":"Heptapleurum parvifoliolatum (C.J.Tseng & G.Hoo) Y.F.Deng","link":"https://kgraph.sg/polyglot/?drug=CDN15256","threat":"——","drugs":["小叶鹅掌柴"]},{"name":"Panax quinquefolius L.","link":"https://kgraph.sg/polyglot/?drug=CDN15634","threat":"biological resource use，natural system modification","drugs":["西洋参"]},{"name":"Picea neoveitchii Mast.","link":"https://kgraph.sg/polyglot/?drug=CDN17216","threat":"residential and commercial development，biological resource use","drugs":["云杉球果"]}],"VU":[{"name":"Cephalotaxus oliveri Mast.","link":"https://kgraph.sg/polyglot/?drug=CDN01056","threat":"agriculture and aquaculture，biological resource use","drugs":["篦子三尖杉"]},{"name":"Thuja koraiensis Nakai","link":"https://kgraph.sg/polyglot/?drug=CDN01423","threat":"biological resource use","drugs":["朝鲜崖柏","朝鲜崖柏仁"]},{"name":"Aquilaria sinensis (Lour.) Spreng.","link":"https://kgraph.sg/polyglot/?drug=CDN01500","threat":"biological resource use","drugs":["沉香","沉香曲","土沉香"]},{"name":"Fritillaria cirrhosa D.Don","link":"https://kgraph.sg/polyglot/?drug=CDN01696","threat":"residential and commercial development","drugs":["川贝母"]},{"name":"Hydnocarpus hainanensis (Merr.) Sleumer","link":"https://kgraph.sg/polyglot/?drug=CDN02144","threat":"agriculture and aquaculture","drugs":["大风子油"]},{"name":"Craibiodendron scleranthum var. kwangtungense (S.Y.Hu) Judd","link":"https://kgraph.sg/polyglot/?drug=CDN03244","threat":"——","drugs":["独角牛","碎骨红"]},{"name":"Eucommia ulmoides Oliv.","link":"https://kgraph.sg/polyglot/?drug=CDN03350","threat":"biological resource use","drugs":["杜仲","杜仲叶","檰芽"]},{"name":"Fokienia hodginsii (Dunn) A.Henry & H H.Thomas","link":"https://kgraph.sg/polyglot/?drug=CDN03786","threat":"agriculture and aquaculture，transportation and service corridors","drugs":["福建柏"]},{"name":"Gastrodia elata Blume","link":"https://kgraph.sg/polyglot/?drug=CDN04687","threat":"——","drugs":["还筒子","天麻"]},{"name":"Albizia julibrissin Durazz.","link":"https://kgraph.sg/polyglot/?drug=CDN04832","threat":"residential and commercial development","drugs":["合欢花","合欢皮"]},{"name":"Blechnum eburneum Christ","link":"https://kgraph.sg/polyglot/?drug=CDN06333","threat":"agriculture and aquaculture","drugs":["荚囊蕨"]},{"name":"Dalbergia odorifera T.C.Chen","link":"https://kgraph.sg/polyglot/?drug=CDN06410","threat":"biological resource use","drugs":["降香"]},{"name":"Dipterocarpus turbinatus C.F.Gaertn.","link":"https://kgraph.sg/polyglot/?drug=CDN06596","threat":"agriculture and aquaculture biological resource use","drugs":["羯布罗香"]},{"name":"Premna szemaoensis C.Pei","link":"https://kgraph.sg/polyglot/?drug=CDN06617","threat":"agriculture and aquaculture biological resource use","drugs":["接骨树","接骨树皮"]},{"name":"Dolichopetalum kwangsiense Tsiang","link":"https://kgraph.sg/polyglot/?drug=CDN06774","threat":"——","drugs":["金凤藤"]},{"name":"Pseudolarix amabilis (J.Nelson) Rehder","link":"https://kgraph.sg/polyglot/?drug=CDN06931","threat":"agriculture and aquaculture ，Invasive and other problematic species, genes & diseases","drugs":["金钱松叶","土荆皮","土槿皮"]},{"name":"Habenaria delavayi Finet","link":"https://kgraph.sg/polyglot/?drug=CDN07074","threat":"——","drugs":["鸡肾参"]},{"name":"Zelkova schneideriana Hand.-Mazz.","link":"https://kgraph.sg/polyglot/?drug=CDN07418","threat":"residential and commercial development，agriculture and aquaculture，transportation and service corridor","drugs":["榉树","榉树皮","榉树叶"]},{"name":"Litchi chinensis Sonn.","link":"https://kgraph.sg/polyglot/?drug=CDN08390","threat":"agriculture and aquaculture","drugs":["荔枝","荔枝根","荔枝核","荔枝壳","荔枝叶"]},{"name":"Dryobalanops aromatica C.F.Gaertn.","link":"https://kgraph.sg/polyglot/?drug=CDN08461","threat":"agriculture and aquaculture，biological resource use，natural system modifications","drugs":["龙脑膏香","龙脑香子","梅花冰片"]},{"name":"Cypripedium henryi Rolfe","link":"https://kgraph.sg/polyglot/?drug=CDN08468","threat":"residential and commercial development，agriculture and aquaculture，biological resource use，pollution","drugs":["龙舌箭"]},{"name":"Gossypium hirsutum L.","link":"https://kgraph.sg/polyglot/?drug=CDN09637","threat":"residential and commercial development，agriculture and aquaculture","drugs":["棉花","棉花根","棉花壳","棉花子"]},{"name":"Magnolia amoena W.C.Cheng","link":"https://kgraph.sg/polyglot/?drug=CDN09930","threat":"biological resource use","drugs":["木兰花","天目木兰"]},{"name":"Magnolia cylindrica E.H.Wilson","link":"https://kgraph.sg/polyglot/?drug=CDN09930","threat":"biological resource use","drugs":["木兰花"]},{"name":"Phoebe zhennan S.K.Lee & F.N.Wei","link":"https://kgraph.sg/polyglot/?drug=CDN10024","threat":"biological resource use，invasive and other problematic pieces ，genes and diseases","drugs":["楠材"]},{"name":"Taxus mairei (Lemée & H.Lév.) S.Y.Hu","link":"https://kgraph.sg/polyglot/?drug=CDN10029","threat":"biological resource use，invasive and other problematic pieces ，genes and diseases","drugs":["南方红豆杉"]},{"name":"Aristolochia yunnanensis Franch.","link":"https://kgraph.sg/polyglot/?drug=CDN10067","threat":"——","drugs":["南木香","小南木香"]},{"name":"Chimaphila umbellata (L.) W.P.C.Barton","link":"https://kgraph.sg/polyglot/?drug=CDN11581","threat":"residential and commercial development，agriculture and aquaculture","drugs":["伞形梅笠草"]},{"name":"Keteleeria evelyniana Mast.","link":"https://kgraph.sg/polyglot/?drug=CDN11988","threat":"agriculture and aquaculture，biological resource use，natural system modification","drugs":["杉松","云南油杉"]},{"name":"Rhamnella gilgitica Mansf. & Melch.","link":"https://kgraph.sg/polyglot/?drug=CDN12230","threat":"———","drugs":["生等[藏药名]","升登"]},{"name":"Cinnamomum verum J.Presl","link":"https://kgraph.sg/polyglot/?drug=CDN13211","threat":"residential and commercial development，agriculture and aquaculture","drugs":["斯里兰卡肉桂","锡兰肉桂"]},{"name":"Aralia chinensis L.","link":"https://kgraph.sg/polyglot/?drug=CDN13270","threat":"——","drugs":["楤木","楤木花","楤木叶"]},{"name":"Santalum album L.","link":"https://kgraph.sg/polyglot/?drug=CDN13528","threat":"biological resource use，natural system modification","drugs":["檀香","檀香泥","檀香油"]},{"name":"Litsea auriculata S.S.Chien & W.C.Cheng","link":"https://kgraph.sg/polyglot/?drug=CDN13688","threat":"agriculture and aquaculture，biological resource use","drugs":["天目木姜叶","天目木姜子"]},{"name":"Hoya pandurata Tsiang","link":"https://kgraph.sg/polyglot/?drug=CDN13782","threat":"——","drugs":["铁草鞋"]},{"name":"Mesua ferrea L.","link":"https://kgraph.sg/polyglot/?drug=CDN13831","threat":"agriculture and aquaculture，biological resource use","drugs":["铁力木"]},{"name":"Cycas siamensis Miq.","link":"https://kgraph.sg/polyglot/?drug=CDN13858","threat":"agriculture and aquaculture，biological resource use，natural system modification","drugs":["铁树","铁树果"]},{"name":"Trillium camschatcense Ker Gawl.","link":"https://kgraph.sg/polyglot/?drug=CDN13969","threat":"agriculture and aquaculture，biological resource use，invasive and other problematic pieces，genes and diseases","drugs":["头顶一颗珠"]},{"name":"Larix potaninii var. chinensis L.K.Fu & Nan Li","link":"https://kgraph.sg/polyglot/?drug=CDN15169","threat":"biological resource use","drugs":["小朴松实"]},{"name":"Schlumbergera truncata (Haw.) Moran","link":"https://kgraph.sg/polyglot/?drug=CDN15385","threat":"residential and commercial development，biological resource use","drugs":["蟹爪兰"]},{"name":"Juniperus tibetica Kom.","link":"https://kgraph.sg/polyglot/?drug=CDN15691","threat":"agriculture and aquaculture，biological resource use","drugs":["西藏圆柏"]},{"name":"Aralia debilis J.Wen","link":"https://kgraph.sg/polyglot/?drug=CDN16682","threat":"——","drugs":["鹰不扑"]},{"name":"Picea asperata Mast.","link":"https://kgraph.sg/polyglot/?drug=CDN17216","threat":"biological resource use","drugs":["云杉球果"]}],"CD ？":[{"name":"Toxicodendron delavayi (Franch.) F.A.Barkley","link":"https://kgraph.sg/polyglot/?drug=CDN11972","threat":"","drugs":["山漆树","小漆树"]}]},"threats":[{"label":"agriculture and aquaculture","count":54},{"label":"biological resource use","count":52},{"label":"residential and commercial development","count":27},{"label":"natural system modification","count":6},{"label":"invasive and other problematic pieces","count":5},{"label":"genes and diseases","count":5},{"label":"transportation and service corridors","count":4}]};
+
+const LEVELS = ['CR','EN','VU','NT','DD','LC'];
+const COLORS = {CR:'#9b2335',EN:'#c0440e',VU:'#c47a00',NT:'#4a7c59',DD:'#5a6b80',LC:'#3d6b3a'};
+const LABELS = {CR:'Critically Endangered',EN:'Endangered',VU:'Vulnerable',NT:'Near Threatened',DD:'Data Deficient',LC:'Least Concern'};
+const COUNTS = {CR:15,EN:42,VU:43,NT:23,DD:41,LC:1072};
+
+// flatten all species with level
+let allSpecies = [];
+for (const [lvl, list] of Object.entries(RAW.byLevel)) {
+  for (const sp of list) {
+    allSpecies.push({...sp, level: lvl});
+  }
+}
+
+// sort: CR first
+const ORDER = {CR:0,EN:1,VU:2,NT:3,DD:4,LC:5};
+allSpecies.sort((a,b)=> (ORDER[a.level]??9)-(ORDER[b.level]??9) || a.name.localeCompare(b.name));
+
+// STATE
+let activeLevel = 'ALL';
+let searchQ = '';
+
+// --- DONUT CHART ---
+const donutData = LEVELS.map(l => COUNTS[l]);
+const donutColors = LEVELS.map(l => COLORS[l]);
+
+const donutLegend = document.getElementById('donut-legend');
+LEVELS.forEach(l => {
+  const el = document.createElement('span');
+  el.className = 'legend-item';
+  el.innerHTML = `<span class="legend-swatch" style="background:${COLORS[l]}"></span>${l} ${COUNTS[l].toLocaleString()}`;
+  el.style.cursor = 'pointer';
+  el.onclick = () => { filterByLevel(l); };
+  donutLegend.appendChild(el);
+});
+
+const donutCtx = document.getElementById('donutChart');
+const donutChart = new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: LEVELS.map(l => `${l} — ${LABELS[l]}`),
+    datasets:[{
+      data: donutData,
+      backgroundColor: donutColors,
+      borderWidth: 2,
+      borderColor: '#edeae3'
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'58%',
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label: ctx => ` ${ctx.label}: ${ctx.parsed.toLocaleString()} species`}}
+    },
+    onClick:(e,el)=>{ if(el.length){ filterByLevel(LEVELS[el[0].index]); } }
+  }
+});
+
+// --- THREAT BAR ---
+const tCtx = document.getElementById('threatChart');
+const threatLabels = RAW.threats.map(t => {
+  const s = t.label;
+  return s.length > 32 ? s.slice(0,30)+'…' : s;
+});
+new Chart(tCtx, {
+  type:'bar',
+  data:{
+    labels: threatLabels,
+    datasets:[{
+      data: RAW.threats.map(t=>t.count),
+      backgroundColor: ['#9b2335','#c0440e','#c47a00','#4a7c59','#5a6b80','#7a8a6a','#aaa'],
+      borderRadius:2, borderSkipped:false
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}, tooltip:{callbacks:{label: c=>` ${c.parsed.x} species`}}},
+    scales:{
+      x:{grid:{color:'rgba(26,23,20,0.06)'}, ticks:{font:{size:10,family:'DM Mono'},color:'#9a9590'}, border:{display:false}},
+      y:{grid:{display:false}, ticks:{font:{size:11,family:'DM Sans'},color:'#1a1714'}, border:{display:false}}
+    }
+  }
+});
+
+// --- STACKED BAR ---
+const sCtx = document.getElementById('stackedChart');
+new Chart(sCtx,{
+  type:'bar',
+  data:{
+    labels:['Threatened species'],
+    datasets:[
+      {label:'VU',data:[43],backgroundColor:'#c47a00',borderRadius:0,borderSkipped:false},
+      {label:'EN',data:[42],backgroundColor:'#c0440e',borderRadius:0,borderSkipped:false},
+      {label:'CR',data:[15],backgroundColor:'#9b2335',borderRadius:0,borderSkipped:false},
+    ]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}, tooltip:{callbacks:{label: c=>` ${c.dataset.label}: ${c.parsed.x}`}}},
+    scales:{
+      x:{stacked:true, grid:{color:'rgba(26,23,20,0.06)'}, ticks:{font:{size:10,family:'DM Mono'},color:'#9a9590'}, border:{display:false}, max:120},
+      y:{stacked:true, grid:{display:false}, ticks:{display:false}, border:{display:false}}
+    }
+  }
+});
+
+// --- FILTER PILLS ---
+const pillsEl = document.getElementById('pills');
+const allPill = document.createElement('button');
+allPill.className='pill active'; allPill.textContent='All'; allPill.dataset.level='ALL';
+allPill.onclick=()=>filterByLevel('ALL');
+pillsEl.appendChild(allPill);
+
+LEVELS.filter(l=>l!=='LC').forEach(l=>{
+  const p = document.createElement('button');
+  p.className=`pill ${l.toLowerCase()}`; p.textContent=l; p.dataset.level=l;
+  p.onclick=()=>filterByLevel(l);
+  pillsEl.appendChild(p);
+});
+const lcPill = document.createElement('button');
+lcPill.className='pill lc'; lcPill.textContent='LC'; lcPill.dataset.level='LC';
+lcPill.onclick=()=>filterByLevel('LC');
+pillsEl.appendChild(lcPill);
+
+function filterByLevel(lvl){
+  activeLevel = lvl;
+  document.querySelectorAll('.pill').forEach(p=>{
+    p.classList.toggle('active', p.dataset.level===lvl);
+  });
+  renderTable();
+}
+
+// --- SEARCH ---
+document.getElementById('search').addEventListener('input', e=>{
+  searchQ = e.target.value.toLowerCase().trim();
+  renderTable();
+});
+
+// --- TABLE RENDER ---
+function getFiltered(){
+  let list = activeLevel === 'ALL' ? allSpecies : allSpecies.filter(s=>s.level===activeLevel);
+  if(searchQ) list = list.filter(s=>
+    s.name.toLowerCase().includes(searchQ) ||
+    (s.drugs && s.drugs.join(' ').toLowerCase().includes(searchQ)) ||
+    (s.threat && s.threat.toLowerCase().includes(searchQ))
+  );
+  return list;
+}
+
+function renderTable(){
+  const filtered = getFiltered();
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  const shown = filtered.slice(0,500);
+  shown.forEach(sp=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-style:italic;min-width:200px">${escHtml(sp.name)}</td>
+      <td><span class="status-badge badge-${sp.level}">${sp.level}</span></td>
+      <td class="drug-names">${sp.drugs && sp.drugs.length ? escHtml(sp.drugs.join(' · ')) : '<span style="color:var(--ink3)">—</span>'}</td>
+      <td class="threat-text">${sp.threat ? escHtml(cleanThreat(sp.threat)) : '<span style="color:var(--ink3)">—</span>'}</td>
+      <td>${sp.link ? `<a class="kgraph-link" href="${sp.link}" target="_blank">↗ Polyglot</a>` : '<span style="color:var(--ink3)">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  const count = document.getElementById('tableCount');
+  const extra = filtered.length > 500 ? ` (showing first 500)` : '';
+  count.textContent = `${filtered.length.toLocaleString()} species${extra}`;
+  document.getElementById('dlLabel').textContent = `Download ${filtered.length.toLocaleString()} filtered species as CSV`;
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function cleanThreat(t){ return t.replace(/，/g,', ').replace(/——/g,'—').replace(/———/g,'—').trim(); }
+
+// --- CSV DOWNLOAD ---
+function downloadCSV(){
+  const filtered = getFiltered();
+  const rows = [['Scientific Name','IUCN Level','Chinese Drug Names','Threat','Polyglot Link']];
+  filtered.forEach(sp=>{
+    rows.push([
+      sp.name,
+      sp.level,
+      sp.drugs ? sp.drugs.join('; ') : '',
+      sp.threat ? cleanThreat(sp.threat) : '',
+      sp.link || ''
+    ]);
+  });
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`redlist_herbs_${activeLevel.toLowerCase()}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// initial render
+renderTable();
+</script>
+</body>
+</html>
